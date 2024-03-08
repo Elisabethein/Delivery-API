@@ -17,7 +17,7 @@ The API should be able to handle the following:
 For integrity, the user will not be able to delete or add regional base fees, unless they change the code itself too.
 The user who wants to change, add or delete fees should be aware of the data in database to avoid any logical errors.
 
-There is also a simple web interface for the API. The web interface is written in Vue.js and can be found in the following repository: [Delivery API Web Interface]()
+There is also a simple web interface for the API. The web interface is written in Vue.js and can be found in the following repository: [Delivery API Web Interface](https://github.com/Elisabethein/Delivery_application)
 The web interface is not required for the API to work, but it is a nice addition to the project. The user can choose a city and vehicle to get the delivery fee.
 
 ## Running the project
