@@ -20,131 +20,140 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureMockMvc
 class DeliveryApiApplicationTests {
 
-	@Autowired
-	private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-	@Autowired
-	private RbfRepository rbfRepository;
+    @Autowired
+    private RbfRepository rbfRepository;
 
-	@Autowired
-	private AtefRepository atefRepository;
+    @Autowired
+    private AtefRepository atefRepository;
 
-	@Autowired
-	private WpefRepository wpefRepository;
+    @Autowired
+    private WpefRepository wpefRepository;
 
-	@Test
-	void testCalculateRbf() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateRbf/Tallinn/Car"))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-				.andDo(MockMvcResultHandlers.print())
-				.andExpect(result -> {
-					String content = result.getResponse().getContentAsString();
-					double value;
-					try {
-						value = Double.parseDouble(content);
-					} catch (NumberFormatException e) {
-						throw new AssertionError("Response is not a valid double");
-					}
-					assertThat(value).isEqualTo(4.0);
-				});
-	}
+    @Test
+    void testCalculateRbf() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateRbf")
+                        .param("city", "Tallinn")
+                        .param("vehicleType", "Car"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(result -> {
+                    String content = result.getResponse().getContentAsString();
+                    double value;
+                    try {
+                        value = Double.parseDouble(content);
+                    } catch (NumberFormatException e) {
+                        throw new AssertionError("Response is not a valid double");
+                    }
+                    assertThat(value).isEqualTo(4.0);
+                });
+    }
 
-	@Test
-	void testCalculateRbfWithDateTime() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateRbf/Tallinn/Bike/2024-03-08 12:00:00"))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-				.andDo(MockMvcResultHandlers.print())
-				.andExpect(result -> {
-					String content = result.getResponse().getContentAsString();
-					double value;
-					try {
-						value = Double.parseDouble(content);
-					} catch (NumberFormatException e) {
-						throw new AssertionError("Response is not a valid double");
-					}
-					assertThat(value).isGreaterThan(0.0);
-				});
-	}
+    @Test
+    void testCalculateRbfWithDateTime() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateRbf")
+                        .param("city", "Tallinn")
+                        .param("vehicleType", "Bike")
+                        .param("datetime", "2024-03-08 12:00:00"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(result -> {
+                    String content = result.getResponse().getContentAsString();
+                    double value;
+                    try {
+                        value = Double.parseDouble(content);
+                    } catch (NumberFormatException e) {
+                        throw new AssertionError("Response is not a valid double");
+                    }
+                    assertThat(value).isGreaterThan(0.0);
+                });
+    }
 
-	@Test
-	void testCalculateRbf_InvalidCity() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateRbf/InvalidCity/Car"))
-				.andExpect(MockMvcResultMatchers.status().isInternalServerError());
-	}
+    @Test
+    void testCalculateRbf_InvalidCity() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateRbf")
+                        .param("city", "InvalidCity")
+                        .param("vehicleType", "Car"))
+                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+    }
 
-	@Test
-	void testCalculateRbf_InvalidVehicle() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateRbf/Tallinn/InvalidVehicle"))
-				.andExpect(MockMvcResultMatchers.status().isInternalServerError());
-	}
+    @Test
+    void testCalculateRbf_InvalidVehicle() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateRbf")
+                        .param("city", "Tallinn")
+                        .param("vehicleType", "InvalidVehicle"))
+                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+    }
 
-	@Test
-	void testChangeBaseFeeRules() throws Exception {
-		String city = "Tartu";
-		String vehicle = "Car";
-		String newFee = "3";
-		mockMvc.perform(MockMvcRequestBuilders.put("/api/changeBaseFeeRules/{forWhichCity}/{forWhichVehicle}/{fee}", city, vehicle, newFee)
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string("Business rules updated"));
+    @Test
+    void testChangeBaseFeeRules() throws Exception {
+        String city = "Tartu";
+        String vehicle = "Car";
+        String newFee = "3";
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/changeBaseFeeRules/{forWhichCity}/{forWhichVehicle}/{fee}", city, vehicle, newFee)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("Business rules updated"));
 
-		double feeAfter = getFeeForCityAndVehicle(city, vehicle);
-		assertThat(feeAfter).isEqualTo(Double.valueOf(newFee));
-	}
+        double feeAfter = getFeeForCityAndVehicle(city, vehicle);
+        assertThat(feeAfter).isEqualTo(Double.valueOf(newFee));
+    }
 
-	private double getFeeForCityAndVehicle(String city, String vehicle) {
-		return rbfRepository.findByCityAndVehicle(city, vehicle).getFee();
-	}
+    private double getFeeForCityAndVehicle(String city, String vehicle) {
+        return rbfRepository.findByCityAndVehicle(city, vehicle).getFee();
+    }
 
-	@Test
-	void testChangeExtraFeeRules() throws Exception {
-		String table = "Atef";
-		String oldValue = "<-10";
-		String newValue = "<-11";
-		String fee = "1.1";
-		mockMvc.perform(MockMvcRequestBuilders.put("/api/changeExtraFeeRules/{table}/{oldValue}/{newValue}/{fee}", table, oldValue, newValue, fee)
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string("Business rules updated"));
+    @Test
+    void testChangeExtraFeeRules() throws Exception {
+        String table = "Atef";
+        String oldValue = "<-10";
+        String newValue = "<-11";
+        String fee = "1.1";
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/changeExtraFeeRules/{table}/{oldValue}/{newValue}/{fee}", table, oldValue, newValue, fee)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("Business rules updated"));
 
-		double feeAfter = getFeeForValue(newValue);
-		assertThat(feeAfter).isEqualTo(Double.valueOf(fee));
-	}
+        double feeAfter = getFeeForValue(newValue);
+        assertThat(feeAfter).isEqualTo(Double.valueOf(fee));
+    }
 
-	private double getFeeForValue(String value) {
-		return atefRepository.findByBorders(value).getFee();
-	}
+    private double getFeeForValue(String value) {
+        return atefRepository.findByBorders(value).getFee();
+    }
 
-	@Test
-	void testAddExtraFeeRules() throws Exception {
-		int rowCountBefore = getRowCount();
+    @Test
+    void testAddExtraFeeRules() throws Exception {
+        int rowCountBefore = getRowCount();
 
-		mockMvc.perform(MockMvcRequestBuilders.post("/api/addExtraFeeRules/Wpef/sunny/0.2")
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string("Business rules updated"));
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/addExtraFeeRules/Wpef/sunny/0.2")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("Business rules updated"));
 
-		int rowCountAfter = getRowCount();
-		assertThat(rowCountAfter).isEqualTo(rowCountBefore+1);
-		assertThat(wpefRepository.findByContaining("sunny").getFee()).isEqualTo(0.2);
-	}
+        int rowCountAfter = getRowCount();
+        assertThat(rowCountAfter).isEqualTo(rowCountBefore + 1);
+        assertThat(wpefRepository.findByContaining("sunny").getFee()).isEqualTo(0.2);
+    }
 
-	@Test
-	void testDeleteExtraFeeRules() throws Exception {
-		int rowCountBefore = getRowCount();
+    @Test
+    void testDeleteExtraFeeRules() throws Exception {
+        int rowCountBefore = getRowCount();
 
-		mockMvc.perform(MockMvcRequestBuilders.delete("/api/deleteExtraFeeRules/Wpef/snow")
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string("Business rules updated"));
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/deleteExtraFeeRules/Wpef/snow")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("Business rules updated"));
 
-		int rowCountAfter = getRowCount();
-		assertThat(rowCountAfter).isEqualTo(rowCountBefore-1);
-	}
+        int rowCountAfter = getRowCount();
+        assertThat(rowCountAfter).isEqualTo(rowCountBefore - 1);
+    }
 
-	private int getRowCount() {
-		return wpefRepository.findAll().size();
-	}
+    private int getRowCount() {
+        return wpefRepository.findAll().size();
+    }
 }

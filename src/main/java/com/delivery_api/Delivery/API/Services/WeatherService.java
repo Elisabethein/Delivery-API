@@ -42,9 +42,10 @@ public class WeatherService {
 
     /**
      * Calculating the delivery fee, based on the given city, vehicle type and datetime
-     * @param city - city name
-     * @param vehicleType  - vehicle type
-     * @param datetime - datetime in format "yyyy-MM-dd HH:mm:ss", can be null
+     *
+     * @param city        - city name
+     * @param vehicleType - vehicle type
+     * @param datetime    - datetime in format "yyyy-MM-dd HH:mm:ss", can be null
      * @return RBF value
      */
     public double calculateRbf(String city, String vehicleType, String datetime) {
@@ -93,7 +94,7 @@ public class WeatherService {
         }
 
         // Use assistant method to calculate the extra fees based on temperature and weather phenomenon
-        if (vehicleType.equals("Scooter") || vehicleType.equals("Bike")){
+        if (vehicleType.equals("Scooter") || vehicleType.equals("Bike")) {
             rbf = getExtraFeesForBikeOrScooter(temperature, rbf, weatherPhenomenon);
         }
 
@@ -106,8 +107,9 @@ public class WeatherService {
 
     /**
      * Get extra fees for bike based on wind speed
+     *
      * @param windSpeed - current wind speed
-     * @param rbf - current RBF value
+     * @param rbf       - current RBF value
      * @return RBF value with extra fees
      */
     private double getExtraFeesForBike(double windSpeed, double rbf) {
@@ -132,8 +134,9 @@ public class WeatherService {
 
     /**
      * Get extra fees for bike or scooter based on temperature and weather phenomenon
-     * @param temperature - current temperature
-     * @param rbf - current RBF value
+     *
+     * @param temperature       - current temperature
+     * @param rbf               - current RBF value
      * @param weatherPhenomenon - current weather phenomenon
      * @return RBF value with extra fees
      */
@@ -161,8 +164,7 @@ public class WeatherService {
                     if (temperature >= min && temperature <= max) {
                         rbf += atef.getFee();
                     }
-                }
-                else {
+                } else {
                     String[] interval = atef.getBorders().split("-");
                     if (temperature >= Double.parseDouble(interval[0]) && temperature <= Double.parseDouble(interval[1])) {
                         rbf += atef.getFee();
@@ -189,7 +191,8 @@ public class WeatherService {
 
     /**
      * Get the base fee for the given city and vehicle type
-     * @param city - city name
+     *
+     * @param city        - city name
      * @param vehicleType - vehicle type
      * @return base regional fee value
      */
@@ -204,6 +207,7 @@ public class WeatherService {
 
     /**
      * Get the station name based on the city
+     *
      * @param city - city name
      * @return station name
      */
@@ -218,8 +222,9 @@ public class WeatherService {
 
     /**
      * Get the latest weather data for the given station
+     *
      * @param weatherList - list of weather data
-     * @param station - station name
+     * @param station     - station name
      * @return latest weather object
      */
     private Optional<Weather> getLatestWeather(List<Weather> weatherList, String station) {
@@ -265,10 +270,11 @@ public class WeatherService {
 
     /**
      * Change the extra fee rules for a specific table
-     * @param table - table name (Atef, Wsef, Wpef)
+     *
+     * @param table    - table name (Atef, Wsef, Wpef)
      * @param oldValue - old value
      * @param newValue - new value (can be same as old value)
-     * @param fee - fee (can be same as existing fee)
+     * @param fee      - fee (can be same as existing fee)
      */
     public void changeExtraFeeRules(String table, String oldValue, String newValue, String fee) {
         // Update the value and fee for the given table
@@ -304,9 +310,10 @@ public class WeatherService {
 
     /**
      * Add new extra fee rule
+     *
      * @param table - table name (Atef, Wsef, Wpef)
      * @param value - value
-     * @param fee - fee
+     * @param fee   - fee
      */
     public void addExtraFeeRules(String table, String value, String fee) {
         // Create a new object and save it to the database
@@ -330,6 +337,7 @@ public class WeatherService {
 
     /**
      * Delete extra fee rule
+     *
      * @param table - table name (Atef, Wsef, Wpef)
      * @param value - existing value (if not found, changes not made)
      */
@@ -361,9 +369,10 @@ public class WeatherService {
 
     /**
      * Change the base fee for a specific city and vehicle
-     * @param forWhichCity - city name
+     *
+     * @param forWhichCity    - city name
      * @param forWhichVehicle - vehicle type
-     * @param fee - new fee
+     * @param fee             - new fee
      */
     public void changeBaseFeeRules(String forWhichCity, String forWhichVehicle, String fee) {
         // Find the object based on city and vehicle type and update the fee

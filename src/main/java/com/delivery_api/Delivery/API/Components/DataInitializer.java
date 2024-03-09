@@ -29,6 +29,7 @@ public class DataInitializer implements ApplicationRunner {
 
     /**
      * Adding initial data to the database
+     *
      * @param args incoming application arguments
      * @throws Exception if an error occurred
      */
@@ -82,7 +83,7 @@ public class DataInitializer implements ApplicationRunner {
                 new Weather("Pärnu", "41803", 0.6, 1.3, "rain", Timestamp.valueOf("2024-02-16 07:15:00")),
                 new Weather("Pärnu", "41803", 5.0, 0.7, "", Timestamp.valueOf("2024-02-20 15:15:00")),
                 new Weather("Pärnu", "41803", -5.0, 5.0, "light snow", Timestamp.valueOf("2024-03-02 10:15:00"))
-                );
+        );
         weatherRepository.saveAll(weatherList);
     }
 }

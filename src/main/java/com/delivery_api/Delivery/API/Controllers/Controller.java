@@ -8,49 +8,35 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api", method = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, produces = MediaType.APPLICATION_JSON_VALUE)
 public class Controller {
     @Autowired
     private WeatherService weatherService; // Service class
 
-
-    /**
-     * Get RBF value for a specific city and vehicle type without datetime parameter
-     * @param city - city name
-     * @param vehicleType - vehicle type
-     * @return RBF value, or -1.0 if an error occurred (uses method getRbfValue)
-     */
-    @CrossOrigin(origins = "http://localhost:5173")
-    @GetMapping("/calculateRbf/{city}/{vehicleType}")
-    public ResponseEntity<Double> calculateRbf(
-            @PathVariable("city") String city,
-            @PathVariable("vehicleType") String vehicleType
-    ) {
-        return getRbfValue(city, vehicleType, null);
-    }
-
     /**
      * Get RBF value for a specific city, vehicle type and datetime
-     * @param city - city name
+     *
+     * @param city        - city name
      * @param vehicleType - vehicle type
-     * @param datetime - datetime in format "yyyy-MM-dd HH:mm:ss"
-     * @return RBF value, or -1.0 if an error occurred (uses method getRbfValue)
+     * @param datetime    - datetime in format "yyyy-MM-dd HH:mm:ss", can be null
+     * @return RBF value, or -1.0 if an error occurred
      */
     @CrossOrigin(origins = "http://localhost:5173")
-    @GetMapping("/calculateRbf/{city}/{vehicleType}/{datetime}")
+    @GetMapping("/calculateRbf")
     public ResponseEntity<Double> calculateRbfByTime(
-            @PathVariable("city") String city,
-            @PathVariable("vehicleType") String vehicleType,
-            @PathVariable("datetime") String datetime
+            @RequestParam("city") String city,
+            @RequestParam("vehicleType") String vehicleType,
+            @RequestParam(value = "datetime", required = false) String datetime
     ) {
         return getRbfValue(city, vehicleType, datetime);
     }
 
     /**
      * Change base fee for a specific city and vehicle type
-     * @param forWhichCity - city name
+     *
+     * @param forWhichCity    - city name
      * @param forWhichVehicle - vehicle type
-     * @param fee - new fee
+     * @param fee             - new fee
      * @return "Business rules updated" if successful, or an error message if an error occurred
      */
     @PutMapping("/changeBaseFeeRules/{forWhichCity}/{forWhichVehicle}/{fee}")
@@ -67,15 +53,15 @@ public class Controller {
         }
     }
 
-
     /**
      * Change extra fee tables' values or fees.
      * Insert old value as newValue if you only want to change fee.
      * Insert old fee as fee if you only want to change value.
-     * @param table - table name (Atef, Wsef, Wpef)
+     *
+     * @param table    - table name (Atef, Wsef, Wpef)
      * @param oldValue - old value
      * @param newValue - new value
-     * @param fee - new fee
+     * @param fee      - new fee
      * @return "Business rules updated" if successful, or an error message if an error occurred
      */
     @PutMapping("/changeExtraFeeRules/{table}/{oldValue}/{newValue}/{fee}")
@@ -95,9 +81,10 @@ public class Controller {
 
     /**
      * Add new extra fee rule
+     *
      * @param table - table name (Atef, Wsef, Wpef)
      * @param value - value
-     * @param fee - fee
+     * @param fee   - fee
      * @return "Business rules updated" if successful, or an error message if an error occurred
      */
     @PostMapping("/addExtraFeeRules/{table}/{value}/{fee}")
@@ -116,6 +103,7 @@ public class Controller {
 
     /**
      * Delete extra fee rule
+     *
      * @param table - table name (Atef, Wsef, Wpef)
      * @param value - value
      * @return "Business rules updated" if successful, or an error message if an error occurred
@@ -135,9 +123,10 @@ public class Controller {
 
     /**
      * Get RBF value for a specific city, vehicle type and datetime
-     * @param city - city name
+     *
+     * @param city        - city name
      * @param vehicleType - vehicle type
-     * @param datetime - datetime in format "yyyy-MM-dd HH:mm:ss", can be null
+     * @param datetime    - datetime in format "yyyy-MM-dd HH:mm:ss", can be null
      * @return RBF value, or -1.0 if an error occurred
      */
     private ResponseEntity<Double> getRbfValue(@PathVariable("city") String city, @PathVariable("vehicleType") String vehicleType, @PathVariable("datetime") String datetime) {
