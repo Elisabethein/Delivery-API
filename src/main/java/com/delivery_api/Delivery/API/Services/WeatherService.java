@@ -3,6 +3,7 @@ package com.delivery_api.Delivery.API.Services;
 import com.delivery_api.Delivery.API.Entities.*;
 import com.delivery_api.Delivery.API.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
 
@@ -236,8 +237,9 @@ public class WeatherService {
     /**
      * Fetch weather data from the given URL and save it to the database
      * Scheduled to run every hour, 15 minutes past the hour
+     * Value for cron is set in application.properties and can be changed
      */
-    @Scheduled(cron = "0 15 * * * *")
+    @Scheduled(cron = "${scheduling.weather.cron}")
     public void fetchWeatherData() {
         String xmlData = restTemplate.getForObject(URL, String.class);
         try {
@@ -286,7 +288,9 @@ public class WeatherService {
                     atef.setFee(Double.parseDouble(fee));
                     atefRepository.save(atef);
                 }
-                break;
+                else {
+                    throw new IllegalArgumentException("Value not found");
+                }
             case "Wsef":
                 Wsef wsef = wsefRepository.findByBorders(oldValue);
                 if (wsef != null) {
@@ -294,7 +298,9 @@ public class WeatherService {
                     wsef.setFee(Double.parseDouble(fee));
                     wsefRepository.save(wsef);
                 }
-                break;
+                else {
+                    throw new IllegalArgumentException("Value not found");
+                }
             case "Wpef":
                 Wpef wpef = wpefRepository.findByContaining(oldValue);
                 if (wpef != null) {
@@ -302,9 +308,11 @@ public class WeatherService {
                     wpef.setFee(Double.parseDouble(fee));
                     wpefRepository.save(wpef);
                 }
-                break;
+                else {
+                    throw new IllegalArgumentException("Value not found");
+                }
             default:
-                System.out.println("Invalid table name");
+                throw new IllegalArgumentException("Invalid table name");
         }
     }
 
@@ -331,7 +339,7 @@ public class WeatherService {
                 wpefRepository.save(wpef);
                 break;
             default:
-                System.out.println("Invalid table name");
+                throw new IllegalArgumentException("Invalid table name");
         }
     }
 
@@ -349,21 +357,27 @@ public class WeatherService {
                 if (atef != null) {
                     atefRepository.delete(atef);
                 }
-                break;
+                else {
+                    throw new IllegalArgumentException("Value not found");
+                }
             case "Wsef":
                 Wsef wsef = wsefRepository.findByBorders(value);
                 if (wsef != null) {
                     wsefRepository.delete(wsef);
                 }
-                break;
+                else {
+                    throw new IllegalArgumentException("Value not found");
+                }
             case "Wpef":
                 Wpef wpef = wpefRepository.findByContaining(value);
                 if (wpef != null) {
                     wpefRepository.delete(wpef);
                 }
-                break;
+                else {
+                    throw new IllegalArgumentException("Value not found");
+                }
             default:
-                System.out.println("Invalid table name");
+                throw new IllegalArgumentException("Invalid table name");
         }
     }
 
@@ -380,6 +394,9 @@ public class WeatherService {
         if (rbf != null) {
             rbf.setFee(Double.parseDouble(fee));
             rbfRepository.save(rbf);
+        }
+        else {
+            throw new IllegalArgumentException("City or vehicle not found");
         }
     }
 }

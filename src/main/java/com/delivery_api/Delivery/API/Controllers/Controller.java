@@ -23,12 +23,19 @@ public class Controller {
      */
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/calculateRbf")
-    public ResponseEntity<Double> calculateRbfByTime(
+    public ResponseEntity<String> calculateRbfByTime(
             @RequestParam("city") String city,
             @RequestParam("vehicleType") String vehicleType,
             @RequestParam(value = "datetime", required = false) String datetime
     ) {
-        return getRbfValue(city, vehicleType, datetime);
+        try {
+            System.out.println("Calculating RBF");
+            double price = weatherService.calculateRbf(city, vehicleType, datetime);
+            System.out.println("RBF calculated");
+            return ResponseEntity.ok(String.valueOf(price));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
+        }
     }
 
     /**
@@ -118,26 +125,6 @@ public class Controller {
             return ResponseEntity.ok("Business rules updated");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Get RBF value for a specific city, vehicle type and datetime
-     *
-     * @param city        - city name
-     * @param vehicleType - vehicle type
-     * @param datetime    - datetime in format "yyyy-MM-dd HH:mm:ss", can be null
-     * @return RBF value, or -1.0 if an error occurred
-     */
-    private ResponseEntity<Double> getRbfValue(@PathVariable("city") String city, @PathVariable("vehicleType") String vehicleType, @PathVariable("datetime") String datetime) {
-        try {
-            System.out.println("Calculating RBF");
-            double price = weatherService.calculateRbf(city, vehicleType, datetime);
-            System.out.println("RBF calculated");
-            return ResponseEntity.ok(price);
-        } catch (Exception e) {
-            System.out.println("Error occurred: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1.0);
         }
     }
 }
