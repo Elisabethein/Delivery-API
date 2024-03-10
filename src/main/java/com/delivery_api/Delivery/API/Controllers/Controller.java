@@ -1,5 +1,7 @@
 package com.delivery_api.Delivery.API.Controllers;
 
+import com.delivery_api.Delivery.API.Services.BaseFeeService;
+import com.delivery_api.Delivery.API.Services.ExtraFeesService;
 import com.delivery_api.Delivery.API.Services.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,8 +12,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/api", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, produces = MediaType.APPLICATION_JSON_VALUE)
 public class Controller {
+    private final WeatherService weatherService;
+    private final BaseFeeService baseFeeService;
+    private final ExtraFeesService extraFeesService;
     @Autowired
-    private WeatherService weatherService; // Service class
+    public Controller(WeatherService weatherService, BaseFeeService baseFeeService, ExtraFeesService extraFeesService) {
+        this.weatherService = weatherService;
+        this.baseFeeService = baseFeeService;
+        this.extraFeesService = extraFeesService;
+    }
 
     /**
      * Get RBF value for a specific city, vehicle type and datetime
@@ -53,7 +62,7 @@ public class Controller {
             @PathVariable("fee") String fee
     ) {
         try {
-            weatherService.changeBaseFeeRules(forWhichCity, forWhichVehicle, fee);
+            baseFeeService.changeBaseFeeRules(forWhichCity, forWhichVehicle, fee);
             return ResponseEntity.ok("Business rules updated");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
@@ -72,14 +81,14 @@ public class Controller {
      * @return "Business rules updated" if successful, or an error message if an error occurred
      */
     @PutMapping("/changeExtraFeeRules/{table}/{oldValue}/{newValue}/{fee}")
-    public ResponseEntity<String> changeBusinessRules(
+    public ResponseEntity<String> changeExtraFeeRules(
             @PathVariable("table") String table,
             @PathVariable("oldValue") String oldValue,
             @PathVariable("newValue") String newValue,
             @PathVariable("fee") String fee
     ) {
         try {
-            weatherService.changeExtraFeeRules(table, oldValue, newValue, fee);
+            extraFeesService.changeExtraFeeRules(table, oldValue, newValue, fee);
             return ResponseEntity.ok("Business rules updated");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
@@ -101,7 +110,7 @@ public class Controller {
             @PathVariable("fee") String fee
     ) {
         try {
-            weatherService.addExtraFeeRules(table, value, fee);
+            extraFeesService.addExtraFeeRules(table, value, fee);
             return ResponseEntity.ok("Business rules updated");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
@@ -121,7 +130,7 @@ public class Controller {
             @PathVariable("value") String value
     ) {
         try {
-            weatherService.deleteExtraFeeRules(table, value);
+            extraFeesService.deleteExtraFeeRules(table, value);
             return ResponseEntity.ok("Business rules updated");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
