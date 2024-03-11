@@ -22,6 +22,22 @@ Cronjob is used to update the weather data every 60 minutes, 15 minutes past the
 There is also a simple web interface for the API. The web interface is written in Vue.js and can be found in the following repository: [Delivery API Web Interface](https://github.com/Elisabethein/Delivery_application)
 The web interface is not required for the API to work, but it is a nice addition to the project. The user can choose a city and vehicle to get the delivery fee.
 
+## Project Structure
+
+The project consists of the following packages:
+* controllers - contains the RESTful API endpoints
+* repositories - contains the JPA repositories
+* services - contains the business logic
+* entities - contains the JPA entities
+* configurations - contains the configuration classes
+* components - contains the data initialization classes
+
+The controller, which takes requests from path /api, consists of the following endpoints:
+* /calculateRbf - calculate the delivery fee based on chosen city and vehicle type
+* 
+
+
+The project also has a test class, which tests the business logic and error handling.
 ## Running the project
 
 To run the project, you need to have Java 17 and Gradle installed on your machine.
@@ -34,4 +50,35 @@ The project can be started by running the DeliveryApiApplication class or by run
 
 ## API Documentation
 
-Every endpoint and public method is documented.
+The controller, which takes requests from path /api, consists of the following endpoints:
+
+* ##### /calculateRbf 
+  - calculate the delivery fee based on chosen city and vehicle type
+  - method: GET
+  - parameters: city, vehicle, datetime (optional)
+  - returns: delivery fee
+
+* ##### /changeBaseFeeRules/{forWhichCity}/{forWhichVehicle}/{fee}
+
+  - change regional base fees for chosen city and vehicle type
+  - method: PUT
+  - parameters: forWhichCity, forWhichVehicle, fee
+  - returns: message if the fee was changed or not
+
+* ##### /changeExtraFeeRules/{table}/{oldValue}/{newValue}/{fee} 
+  - change extra fees for chosen table, add which value to change, the new value and the fee
+  - method: PUT
+  - parameters: table, oldValue, newValue, fee
+  - returns: message if the fee was changed or not
+
+* ##### /addExtraFeeRules/{table}/{value}/{fee} 
+  - add extra fees for chosen table, value and the fee
+  - method: POST
+  - parameters: table, value, fee
+  - returns: message if the fee was added or not
+
+* ##### /deleteExtraFeeRules/{table}/{value}
+  - delete extra fees for chosen table and value
+  - method: DELETE
+  - parameters: table, value
+  - returns: message if the fee was deleted or not

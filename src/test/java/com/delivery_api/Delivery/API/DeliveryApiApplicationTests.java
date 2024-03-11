@@ -34,7 +34,7 @@ class DeliveryApiApplicationTests {
 
     @Test
     void testCalculateRbf() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateRbf")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateDeliveryFee")
                         .param("city", "Tallinn")
                         .param("vehicleType", "Car"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -54,7 +54,7 @@ class DeliveryApiApplicationTests {
 
     @Test
     void testCalculateRbfWithDateTime() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateRbf")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateDeliveryFee")
                         .param("city", "Tallinn")
                         .param("vehicleType", "Bike")
                         .param("datetime", "2024-03-08 12:00:00"))
@@ -75,7 +75,7 @@ class DeliveryApiApplicationTests {
 
     @Test
     void testCalculateRbf_InvalidCity() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateRbf")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateDeliveryFee")
                         .param("city", "InvalidCity")
                         .param("vehicleType", "Car"))
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError());
@@ -83,7 +83,7 @@ class DeliveryApiApplicationTests {
 
     @Test
     void testCalculateRbf_InvalidVehicle() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateRbf")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/calculateDeliveryFee")
                         .param("city", "Tallinn")
                         .param("vehicleType", "InvalidVehicle"))
                 .andExpect(MockMvcResultMatchers.status().isInternalServerError());
