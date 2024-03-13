@@ -1,7 +1,7 @@
 # Delivery Application
 
 This is a Spring Boot project written in Java. The project uses Gradle as a build tool.
-This project is for internship trial work.
+This project is for internship trial work at Fujitsu Estonia.
 
 ## Project Description
 The goal of this project is to create a RESTful API.
