@@ -41,7 +41,8 @@ There are several ways you could run the project. I have dockerised the project,
 3) Run the project in an IDE by running the DeliveryApiApplication class.
 4) Run the project in terminal by running the following command: ```./gradlew bootRun```
 
-* The application will start on port 8080. But if by any chance the port is already in use, you can change the port.
+
+* The application will start on port 8080. You can specify the port in application.properties file but the front-end is programmed to interact with server on port 8080
 * The database is an in-memory H2 database, which can be accessed at the following URL: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
 * The username is "sa" and the password is empty.
 
