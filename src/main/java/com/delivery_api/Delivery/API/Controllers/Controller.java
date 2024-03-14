@@ -31,7 +31,7 @@ public class Controller {
      * @return RBF value, or -1.0 if an error occurred
      */
     @CrossOrigin(origins = "http://localhost:5173")
-    @GetMapping("/calculateDeliveryFee")
+    @GetMapping("/calculateRbf")
     public ResponseEntity<String> calculateRbfByTime(
             @RequestParam("city") String city,
             @RequestParam("vehicleType") String vehicleType,

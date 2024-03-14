@@ -40,11 +40,13 @@ The controller, which takes requests from path /api, consists of the following e
 The project also has a test class, which tests the business logic and error handling.
 ## Running the project
 
-To run the project, you need to have Java 17 and Gradle installed on your machine.
-The project can be started by running the DeliveryApiApplication class or by running the following command in the terminal:
-```./gradlew bootRun```
+There are several ways you could run the project. I have dockerised the project, so you can use Docker Desktop to run the project.
+1) Run the compose.yaml file which creates a container in Docker Desktop.
+2) Run the DeliveryApiApplication.jar file in the terminal.
+3) Run the project in an IDE by running the DeliveryApiApplication class.
+4) Run the project in terminal by running the following command: ```./gradlew bootRun```
 
-* The application will start on port 8080.
+* The application will start on port 8080. But if by any chance the port is already in use, you can change the port.
 * The database is an in-memory H2 database, which can be accessed at the following URL: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
 * The username is "sa" and the password is empty.
 
