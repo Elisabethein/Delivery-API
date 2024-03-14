@@ -80,3 +80,5 @@ The controller, which takes requests from path /api, consists of the following e
   - method: DELETE
   - parameters: table, value
   - returns: message if the fee was deleted or not
+
+All public methods and business logic is documented in the code.
