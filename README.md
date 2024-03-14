@@ -32,11 +32,6 @@ The project consists of the following packages:
 * configurations - contains the configuration classes
 * components - contains the data initialization classes
 
-The controller, which takes requests from path /api, consists of the following endpoints:
-* /calculateRbf - calculate the delivery fee based on chosen city and vehicle type
-* 
-
-
 The project also has a test class, which tests the business logic and error handling.
 ## Running the project
 
